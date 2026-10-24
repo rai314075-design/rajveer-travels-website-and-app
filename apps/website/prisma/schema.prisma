@@ -1,0 +1,299 @@
+// Rajveer Travels — PostgreSQL schema
+// Handles all transactional / relational data where consistency matters:
+// users, buses, routes, trips, seats, bookings, payments.
+
+generator client {
+  provider     = "prisma-client-js"
+  engineType   = "binary"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum BusType {
+  AC_SEATER
+  AC_SLEEPER
+  NON_AC_SEATER
+  NON_AC_SLEEPER
+}
+
+enum SeatStatus {
+  AVAILABLE
+  LOCKED
+  BOOKED
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  CREATED
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum NotificationChannel {
+  EMAIL
+  SMS
+}
+
+enum ComplaintCategory {
+  BUS
+  SERVICE
+  DRIVER
+  PAYMENT
+  OTHER
+}
+
+enum ComplaintStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+}
+
+enum RefundStatus {
+  REQUESTED
+  APPROVED
+  REJECTED
+  PAID
+}
+
+enum Language {
+  ENGLISH
+  HINDI
+}
+
+model User {
+  id         String    @id @default(cuid())
+  auth0Id    String?   @unique
+  name       String
+  email      String    @unique
+  password   String?   // Optional: for custom email/password auth
+  phone      String?
+  address    String?
+  phoneVerified Boolean @default(false)
+  emailVerified Boolean @default(false)
+  emailOtpHash String?
+  emailOtpExpiresAt DateTime?
+  pendingEmail String?
+  phoneOtpHash String?
+  phoneOtpExpiresAt DateTime?
+  phoneOtpSentAt DateTime?
+  phoneOtpAttempts Int @default(0)
+  pendingPhone String?
+  language   Language   @default(ENGLISH)
+  role       Role      @default(USER)
+  isSuperAdmin Boolean  @default(false)
+  bannedUntil DateTime?
+  notificationChannel NotificationChannel?
+  createdAt  DateTime  @default(now())
+  bookings   Booking[]
+  complaints Complaint[]
+  refunds    RefundRequest[]
+  mobileAuthCodes MobileAuthCode[]
+}
+
+// Short lived, single use bridge from the Auth0 browser login to the mobile JWT.
+model MobileAuthCode {
+  id        String   @id @default(cuid())
+  codeHash  String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([expiresAt])
+  @@index([userId])
+}
+
+model Bus {
+  id                String   @id @default(cuid())
+  operator          String   @default("Rajveer Travels")
+  busNumber         String   @unique
+  type              BusType
+  totalSeats        Int
+  description       String?
+  isActive          Boolean  @default(true)
+  amenities         String[] @default([])
+  upiId             String?
+  paymentQrUrl      String?
+  ownerPhone        String?
+  pickupLocation    String?
+  dropLocation      String?
+  createdAt         DateTime @default(now())
+  trips             Trip[]
+}
+
+model Route {
+  id            String   @id @default(cuid())
+  source        String
+  destination   String
+  pickupPoint   String?
+  dropPoint     String?
+  distanceKm    Int
+  durationMins  Int
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  trips         Trip[]
+
+  @@index([source, destination])
+}
+
+model Trip {
+  id             String    @id @default(cuid())
+  busId          String
+  bus            Bus       @relation(fields: [busId], references: [id])
+  routeId        String
+  route          Route     @relation(fields: [routeId], references: [id])
+  departureTime  DateTime
+  arrivalTime    DateTime
+  travelDate     DateTime
+  fare           Decimal   @db.Decimal(10, 2)
+  isActive      Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  seats          Seat[]
+  bookings       Booking[]
+  vehicleId      String?
+  vehicle        Vehicle?  @relation(fields: [vehicleId], references: [id])
+
+  @@index([travelDate])
+  @@index([routeId, travelDate])
+}
+
+model Seat {
+  id           String     @id @default(cuid())
+  tripId       String
+  trip         Trip       @relation(fields: [tripId], references: [id])
+  seatNumber   String
+  status       SeatStatus @default(AVAILABLE)
+  lockedUntil  DateTime?
+  bookingId    String?
+  booking      Booking?   @relation(fields: [bookingId], references: [id])
+
+  @@unique([tripId, seatNumber])
+}
+
+model Booking {
+  id             String           @id @default(cuid())
+  userId         String
+  user           User             @relation(fields: [userId], references: [id])
+  tripId         String
+  trip           Trip             @relation(fields: [tripId], references: [id])
+  seats          Seat[]
+  seatReservations SeatReservation[]
+  passengerInfo  Json
+  totalAmount    Decimal          @db.Decimal(10, 2)
+  status         BookingStatus    @default(PENDING)
+  createdAt      DateTime         @default(now())
+  payment        Payment?
+  complaints     Complaint[]
+  refundRequest  RefundRequest?
+}
+
+model Payment {
+  id                 String        @id @default(cuid())
+  bookingId          String        @unique
+  booking            Booking       @relation(fields: [bookingId], references: [id])
+  razorpayOrderId    String
+  razorpayPaymentId  String?
+  razorpaySignature  String?
+  amount             Decimal       @db.Decimal(10, 2)
+  status             PaymentStatus @default(CREATED)
+  createdAt          DateTime      @default(now())
+}
+
+model Complaint {
+  id          String           @id @default(cuid())
+  userId      String
+  user        User             @relation(fields: [userId], references: [id])
+  bookingId   String?
+  booking     Booking?         @relation(fields: [bookingId], references: [id])
+  category    ComplaintCategory
+  message     String
+  status      ComplaintStatus  @default(OPEN)
+  createdAt   DateTime         @default(now())
+  resolvedAt  DateTime?
+
+  @@index([status, createdAt])
+}
+
+model RefundRequest {
+  id            String       @id @default(cuid())
+  userId        String
+  user          User         @relation(fields: [userId], references: [id])
+  bookingId     String       @unique
+  booking       Booking      @relation(fields: [bookingId], references: [id])
+  upiId         String
+  amount        Decimal      @db.Decimal(10, 2)
+  cancellationOtp String?
+  status        RefundStatus @default(REQUESTED)
+  adminMessage  String?
+  createdAt     DateTime     @default(now())
+  processedAt   DateTime?
+}
+
+model Vehicle {
+  id          String   @id @default(cuid())
+  name        String
+  totalDecks  Int
+  isActive    Boolean  @default(true)
+  seatTemplates SeatTemplate[]
+  trips       Trip[]
+}
+
+model SeatTemplate {
+  id          String   @id @default(cuid())
+  vehicleId   String
+  vehicle     Vehicle  @relation(fields: [vehicleId], references: [id])
+  seatNumber  String
+  deck        Deck
+  type        SeatType
+  rowSpan     Int      @default(1)
+  colSpan     Int      @default(1)
+  xPosition   Int
+  yPosition   Int
+  reservations SeatReservation[]
+}
+
+model SeatReservation {
+  id            String   @id @default(cuid())
+  bookingId     String?
+  booking       Booking? @relation(fields: [bookingId], references: [id])
+  seatTemplateId String
+  seatTemplate  SeatTemplate @relation(fields: [seatTemplateId], references: [id])
+  scheduleId    String
+  status        ReservationStatus @default(AVAILABLE)
+  lockedAt      DateTime?
+  lockedUntil   DateTime?
+
+  @@index([scheduleId, status])
+  @@index([lockedUntil])
+}
+
+enum Deck {
+  LOWER
+  UPPER
+}
+
+enum SeatType {
+  SEAT
+  SLEEPER
+}
+
+enum ReservationStatus {
+  AVAILABLE
+  LOCKED
+  BOOKED
+}

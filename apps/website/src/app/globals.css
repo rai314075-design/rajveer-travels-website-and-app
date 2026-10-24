@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-gray-50 text-gray-900;
+}
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+button,
+input,
+select,
+textarea {
+  max-width: 100%;
+}
+
+button:not(:disabled) {
+  -webkit-tap-highlight-color: transparent;
+  transition: filter 100ms ease, transform 100ms ease;
+}
+
+button:not(:disabled):active {
+  filter: brightness(0.94);
+  transform: scale(0.985);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button:not(:disabled) {
+    transition: none;
+  }
+}

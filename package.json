@@ -1,0 +1,11 @@
+{
+  "name": "rajveer-travels-monorepo",
+  "private": true,
+  "packageManager": "pnpm@12.15.0",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "expo": "pnpm --filter rajveer-travels-app exec expo"
+  },
+  "devDependencies": { "turbo": "^2.5.0" }
+}

@@ -1,0 +1,34 @@
+{
+  "expo": {
+    "name": "Rajveer Travels",
+    "slug": "rajveer-travels",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets-local/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.rajveertravels.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets-local/android-icon-foreground.png",
+        "backgroundImage": "./assets-local/android-icon-background.png",
+        "monochromeImage": "./assets-local/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "package": "com.rajveertravels.app"
+    },
+    "web": {
+      "favicon": "./assets-local/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-font",
+      "expo-status-bar"
+    ],
+    "scheme": "rajveertravels"
+  }
+}

@@ -1,0 +1,122 @@
+import { useAuth } from './auth';
+
+// English + Hindi, matching the website's two languages. The active language is the one saved on
+// the user's profile (guests get English, same as the website).
+const en = {
+  tabHome: 'Home', tabBookings: 'Bookings', tabHelp: 'Help', tabProfile: 'Profile', tabSettings: 'Settings',
+  brand: 'Rajveer Travels',
+  heroTitle: 'Your next journey starts here.',
+  heroSub: 'Find buses across India, choose the seat you want, and travel with confidence.',
+  statRoutes: 'routes', statSupport: 'trip support', statSeats: 'seats per booking',
+  planTrip: 'Plan your trip', whereGoing: 'Where are you going?', searchSub: 'Search schedules and select your seat.',
+  from: 'From', to: 'To', fromPh: 'Departure city', toPh: 'Arrival city', travelDate: 'Travel date',
+  searchBuses: 'Search buses', enterCities: 'Enter both cities to search.',
+  popular: 'Available routes', familiar: 'Choose a route to view scheduled buses', viewBuses: 'View available buses', searchRoute: 'Search route →',
+  routeLoadError: 'Live routes could not be loaded. You can still search by city.', noRoutes: 'No active routes are available yet.',
+  feat1T: 'Choose your seat', feat1D: 'See the complete bus layout, including seater and sleeper berths.',
+  feat2T: 'Book with clarity', feat2D: 'Review the route, fare, bus details, and owner contact before confirming.',
+  feat3T: 'Travel supported', feat3D: 'Get practical trip support from booking through departure.',
+  bookABus: 'Book a bus', searchTitle: 'Available buses', bookNotice: 'You can view bus times, routes, details, and prices. To book a bus, log in or register, verify your email, and verify your phone with the OTP on the website.',
+  result: 'result', results: 'results', noBuses: 'No buses found for this route/date.', startingFrom: 'Starting from',
+  departure: 'Departure', arrival: 'Arrival', selectSeats: 'Select seats', verifyToBook: 'Verify to book', loginToBook: 'Log in to book', upi: 'UPI',
+  tripTitle: 'Choose your seat', perSeat: 'per seat', seatsCount: 'seats', tripNotFound: 'Trip not found',
+  lowerDeck: 'Lower deck', upperDeck: 'Upper deck', selectYourSeats: 'Select your seats', tapSeat: 'Tap a seat to select it', selectedCount: 'selected',
+  legendSeat: 'Seat', legendSleeper: 'Sleeper', legendSelected: 'Selected', legendLocked: 'Locked (10 min)', legendBooked: 'Booked',
+  layoutUnavailable: 'The seat layout for this trip is not available yet.', maxSeats: 'You can book up to 6 seats at a time.',
+  fare: 'Fare', total: 'Total', bookTicket: 'Book ticket', booking: 'Booking ticket…',
+  loginRequired: 'Please log in to select seats', loginRequiredSub: 'You need an account to book seats.',
+  verifyRequired: 'Verify your email and phone to book', verifyRequiredSub: 'Open your profile to finish verification. Phone OTP is completed on the website.',
+  bookingConfirmed: 'Booking confirmed', ticketBooked: 'Your ticket is booked', ownerCallSoon: 'The bus owner will call you soon with the final travel details.',
+  bookingId: 'Booking ID', busOwner: 'Bus owner', ownerPhone: 'Owner phone', totalFare: 'Total fare', callOwner: 'Call bus owner', ownerWillContact: 'The owner will contact you', viewBookings: 'View my bookings',
+  welcomeBack: 'Welcome back', loginSub: 'Log in to your Rajveer Travels account', authBookingHint: 'Browse buses anytime. Sign in or create an account to book tickets.', email: 'Email', password: 'Password',
+  showPassword: 'Show password', hidePassword: 'Hide password', passwordHint: 'Use at least 8 characters.',
+  googleSignIn: 'Google sign-in', continueGoogle: 'Continue with Google', openingGoogle: 'Opening Google…', orEmail: 'or continue with email', or: 'OR', googleSignInFailed: 'Google sign-in did not finish.', googleCodeMissing: 'No sign-in code was returned.', backToApp: 'Back to Settings', login: 'Log in', loggingIn: 'Logging in…', noAccount: "Don't have an account?", register: 'Register',
+  createAccount: 'Create account', createSub: 'Create your Rajveer Travels account', name: 'Full name', phoneOptional: 'Phone (optional)', haveAccount: 'Already have an account?', creating: 'Creating account…',
+  fillAll: 'Please fill in all required fields.', passwordMin: 'Use at least 8 characters for the password.',
+  bookedTickets: 'Booked tickets', bookingHistorySub: 'See previous and cancelled bookings.', upcomingTicketsSub: 'View tickets for upcoming trips.', noBookedTickets: 'No upcoming tickets yet.', bookingHistory: 'Booking history', bookingsSub: 'View your trips and manage your bookings.', noBookings: 'No bookings yet.',
+  seatsLabel: 'Seats', requestCancel: 'Request cancellation', cancelDelete: 'Cancel & delete', deleteHistory: 'Delete from history',
+  upiTitle: 'UPI ID for refund', upiSub: 'An admin will review the cancellation request.', submit: 'Submit', close: 'Close',
+  cancelSent: 'Cancellation request sent for admin review.', cancelHint: 'To cancel, choose a ticket and enter your UPI ID. Your request will be completed after admin review.',
+  confirmUnpaid: 'Cancelling without contacting the bus owner may suspend your account for 30 days. Do you want to continue?', confirmDelete: 'Remove this booking from your history?',
+  cancel: 'Cancel', remove: 'Remove', reportIssue: 'Report an issue', phoneNA: 'Phone not available',
+  help: 'Help', supportSub: 'Contact our support team.', contactSupport: 'Contact support', supportHint: 'Add your booking ID if your issue is related to a trip.',
+  issueType: 'Issue type', bookingIdOpt: 'Booking ID (optional)', bookingIdPh: 'Enter booking ID', describe: 'Describe the issue', describePh: 'Tell us what happened',
+  sendMessage: 'Send message', sending: 'Sending…', complaintSent: 'Complaint sent to the admin.', minChars: 'Please write at least 10 characters.',
+  catBUS: 'Bus', catSERVICE: 'Service', catDRIVER: 'Driver', catPAYMENT: 'Payment', catOTHER: 'Other',
+  settings: 'Settings', settingsSub: 'Manage your account and trips.', profile: 'Profile', profileSettings: 'Profile and verification', preferences: 'Preferences', language: 'Language', personalInfo: 'Personal information', verification: 'Verification',
+  verified: 'Verified', notVerified: 'Not verified', status: 'Status', emailFixed: 'Your email is set once at registration and cannot be changed.',
+  sendEmailCode: 'Send email verification code', enterEmailCode: 'Enter the 6-digit code sent to your email', verifyEmail: 'Verify email', emailCodeSent: 'Email verification code sent.', emailVerifiedMsg: 'Email verified.',
+  phone: 'Phone', phoneWeb: 'Phone verification uses an SMS code that is completed on the website.', phoneWebBtn: 'Verify phone on website',
+  address: 'Address (optional)', saveProfile: 'Save profile', saving: 'Saving…', profileUpdated: 'Profile updated.',
+  logout: 'Log out', logoutSub: 'End your current session.', notifications: 'Notifications', markAllRead: 'Mark all read', allCaughtUp: 'All caught up', noNotifications: 'No notifications yet.', unread: 'unread',
+  guestTitle: 'Log in to continue', guestSub: 'Log in or create an account to book tickets, see your bookings and get support.',
+  loading: 'Loading…', retry: 'Try again', error: 'Something went wrong.',
+};
+
+type Key = keyof typeof en;
+
+const hi: Record<Key, string> = {
+  tabSettings: 'सेटिंग्स', settings: 'सेटिंग्स', settingsSub: 'अपना खाता और यात्राएँ प्रबंधित करें।', profileSettings: 'प्रोफ़ाइल और सत्यापन',
+  bookedTickets: 'बुक किए गए टिकट', bookingHistorySub: 'पिछली और रद्द बुकिंग देखें।', upcomingTicketsSub: 'आगामी यात्राओं के टिकट देखें।', noBookedTickets: 'आगामी यात्रा का कोई टिकट नहीं है।',
+  googleSignIn: 'Google साइन-इन', continueGoogle: 'Google से जारी रखें', openingGoogle: 'Google खुल रहा है…', orEmail: 'या ईमेल से जारी रखें', or: 'या', googleSignInFailed: 'Google साइन-इन पूरा नहीं हुआ।', googleCodeMissing: 'साइन-इन कोड नहीं मिला।', backToApp: 'सेटिंग्स पर वापस जाएँ',
+  tabHome: 'होम', tabBookings: 'बुकिंग', tabHelp: 'सहायता', tabProfile: 'प्रोफ़ाइल',
+  brand: 'राजवीर ट्रैवल्स',
+  heroTitle: 'हर सफर, आराम से शुरू करें',
+  heroSub: 'भारत भर में बसें खोजें, अपनी पसंदीदा सीट चुनें और भरोसे के साथ सफर करें।',
+  statRoutes: 'रूट', statSupport: 'ट्रिप सहायता', statSeats: 'सीटें प्रति बुकिंग',
+  planTrip: 'अपनी यात्रा की योजना बनाएं', whereGoing: 'आप कहाँ जा रहे हैं?', searchSub: 'समय-सारणी खोजें और अपनी सीट चुनें।',
+  from: 'कहाँ से', to: 'कहाँ तक', fromPh: 'प्रस्थान शहर', toPh: 'गंतव्य शहर', travelDate: 'यात्रा की तारीख',
+  searchBuses: 'बस खोजें', enterCities: 'खोजने के लिए दोनों शहर दर्ज करें।',
+  popular: 'उपलब्ध रूट', familiar: 'शेड्यूल की गई बसें देखने के लिए रूट चुनें', viewBuses: 'उपलब्ध बसें देखें', searchRoute: 'रूट खोजें →',
+  routeLoadError: 'लाइव रूट लोड नहीं हो सके। आप शहर का नाम डालकर खोज सकते हैं।', noRoutes: 'अभी कोई सक्रिय रूट उपलब्ध नहीं है।',
+  feat1T: 'अपनी सीट चुनें', feat1D: 'सीटर और स्लीपर सहित बस का पूरा लेआउट देखें।',
+  feat2T: 'साफ़-साफ़ बुकिंग', feat2D: 'पुष्टि से पहले रूट, किराया, बस की जानकारी और मालिक का संपर्क देखें।',
+  feat3T: 'यात्रा में सहयोग', feat3D: 'बुकिंग से लेकर प्रस्थान तक व्यावहारिक ट्रिप सहायता पाएं।',
+  bookABus: 'बस बुक करें', searchTitle: 'उपलब्ध बसें', bookNotice: 'आप बस का समय, मार्ग, जानकारी और किराया देख सकते हैं। बुकिंग के लिए लॉग इन या रजिस्टर करें, ईमेल सत्यापित करें और वेबसाइट पर फोन OTP सत्यापित करें।',
+  result: 'परिणाम', results: 'परिणाम', noBuses: 'इस मार्ग और तारीख के लिए कोई बस नहीं मिली।', startingFrom: 'शुरुआती किराया',
+  departure: 'प्रस्थान', arrival: 'आगमन', selectSeats: 'सीट चुनें', verifyToBook: 'बुकिंग के लिए सत्यापित करें', loginToBook: 'बुकिंग के लिए लॉग इन करें', upi: 'UPI',
+  tripTitle: 'अपनी सीट चुनें', perSeat: 'प्रति सीट', seatsCount: 'सीटें', tripNotFound: 'ट्रिप नहीं मिली',
+  lowerDeck: 'निचला डेक', upperDeck: 'ऊपरी डेक', selectYourSeats: 'अपनी सीटें चुनें', tapSeat: 'चुनने के लिए सीट पर टैप करें', selectedCount: 'चुनी गईं',
+  legendSeat: 'सीट', legendSleeper: 'स्लीपर', legendSelected: 'चुनी हुई', legendLocked: 'लॉक (10 मिनट)', legendBooked: 'बुक',
+  layoutUnavailable: 'इस ट्रिप का सीट लेआउट अभी उपलब्ध नहीं है।', maxSeats: 'आप एक बार में अधिकतम 6 सीटें बुक कर सकते हैं।',
+  fare: 'किराया', total: 'कुल', bookTicket: 'टिकट बुक करें', booking: 'टिकट बुक हो रहा है…',
+  loginRequired: 'सीट चुनने के लिए कृपया लॉग इन करें', loginRequiredSub: 'सीट बुक करने के लिए खाता ज़रूरी है।',
+  verifyRequired: 'बुकिंग के लिए ईमेल और फोन सत्यापित करें', verifyRequiredSub: 'सत्यापन पूरा करने के लिए प्रोफ़ाइल खोलें। फोन OTP वेबसाइट पर पूरा होता है।',
+  bookingConfirmed: 'बुकिंग की पुष्टि', ticketBooked: 'आपका टिकट बुक हो गया है', ownerCallSoon: 'बस मालिक यात्रा की अंतिम जानकारी के लिए जल्द आपको कॉल करेंगे।',
+  bookingId: 'बुकिंग ID', busOwner: 'बस मालिक', ownerPhone: 'मालिक का फोन', totalFare: 'कुल किराया', callOwner: 'बस मालिक को कॉल करें', ownerWillContact: 'मालिक आपसे संपर्क करेंगे', viewBookings: 'मेरी बुकिंग देखें',
+  welcomeBack: 'वापसी पर स्वागत है', loginSub: 'अपने राजवीर ट्रैवल्स खाते में लॉग इन करें', authBookingHint: 'बसें कभी भी देखें। टिकट बुक करने के लिए लॉग इन करें या खाता बनाएं।', email: 'ईमेल', password: 'पासवर्ड',
+  showPassword: 'पासवर्ड दिखाएं', hidePassword: 'पासवर्ड छिपाएं', passwordHint: 'कम से कम 8 अक्षरों का उपयोग करें।',
+  login: 'लॉग इन', loggingIn: 'लॉग इन हो रहा है…', noAccount: 'खाता नहीं है?', register: 'रजिस्टर करें',
+  createAccount: 'खाता बनाएं', createSub: 'अपना राजवीर ट्रैवल्स खाता बनाएं', name: 'पूरा नाम', phoneOptional: 'फोन (वैकल्पिक)', haveAccount: 'पहले से खाता है?', creating: 'खाता बन रहा है…',
+  fillAll: 'कृपया सभी ज़रूरी जानकारी भरें।', passwordMin: 'पासवर्ड कम से कम 8 अक्षरों का रखें।',
+  bookingHistory: 'बुकिंग इतिहास', bookingsSub: 'अपनी यात्राएं देखें और बुकिंग प्रबंधित करें।', noBookings: 'अभी कोई बुकिंग नहीं है।',
+  seatsLabel: 'सीटें', requestCancel: 'रद्द करने का अनुरोध', cancelDelete: 'रद्द करें और हटाएं', deleteHistory: 'इतिहास से हटाएं',
+  upiTitle: 'रिफंड के लिए UPI ID', upiSub: 'एडमिन अनुरोध की समीक्षा करेगा।', submit: 'भेजें', close: 'बंद करें',
+  cancelSent: 'रद्दीकरण अनुरोध भेज दिया गया है।', cancelHint: 'रद्दीकरण के लिए टिकट चुनें और UPI ID दर्ज करें। अनुरोध एडमिन की समीक्षा के बाद पूरा होगा।',
+  confirmUnpaid: 'बस मालिक से संपर्क किए बिना टिकट रद्द करने पर आपका खाता 30 दिनों के लिए निलंबित हो सकता है। क्या आप जारी रखना चाहते हैं?', confirmDelete: 'क्या आप इस बुकिंग को इतिहास से हटाना चाहते हैं?',
+  cancel: 'रद्द करें', remove: 'हटाएं', reportIssue: 'समस्या बताएं', phoneNA: 'नंबर उपलब्ध नहीं',
+  help: 'सहायता', supportSub: 'हमारी सहायता टीम से संपर्क करें।', contactSupport: 'सहायता टीम से संपर्क करें', supportHint: 'बुकिंग से जुड़ी समस्या हो तो बुकिंग ID जोड़ें।',
+  issueType: 'समस्या का प्रकार', bookingIdOpt: 'बुकिंग ID (वैकल्पिक)', bookingIdPh: 'बुकिंग ID दर्ज करें', describe: 'समस्या का विवरण', describePh: 'अपनी समस्या लिखें',
+  sendMessage: 'संदेश भेजें', sending: 'भेजा जा रहा है…', complaintSent: 'शिकायत एडमिन को भेज दी गई है।', minChars: 'कृपया कम से कम 10 अक्षर लिखें।',
+  catBUS: 'बस', catSERVICE: 'सेवा', catDRIVER: 'ड्राइवर', catPAYMENT: 'भुगतान', catOTHER: 'अन्य',
+  profile: 'प्रोफ़ाइल', preferences: 'प्राथमिकताएं', language: 'भाषा', personalInfo: 'व्यक्तिगत जानकारी', verification: 'सत्यापन',
+  verified: 'सत्यापित', notVerified: 'सत्यापित नहीं', status: 'स्थिति', emailFixed: 'ईमेल पहले ही तय है और इसे बदला नहीं जा सकता।',
+  sendEmailCode: 'ईमेल सत्यापन कोड भेजें', enterEmailCode: 'ईमेल पर भेजा गया 6 अंकों का कोड दर्ज करें', verifyEmail: 'ईमेल सत्यापित करें', emailCodeSent: 'ईमेल पर सत्यापन कोड भेज दिया गया है।', emailVerifiedMsg: 'ईमेल सत्यापित हो गया।',
+  phone: 'फोन', phoneWeb: 'फोन सत्यापन SMS कोड से होता है, जो वेबसाइट पर पूरा किया जाता है।', phoneWebBtn: 'वेबसाइट पर फोन सत्यापित करें',
+  address: 'पता (वैकल्पिक)', saveProfile: 'प्रोफ़ाइल सेव करें', saving: 'सेव हो रहा है…', profileUpdated: 'प्रोफ़ाइल अपडेट हो गई।',
+  logout: 'लॉग आउट', logoutSub: 'अपना वर्तमान सत्र समाप्त करें।', notifications: 'सूचनाएं', markAllRead: 'सब पढ़ा हुआ', allCaughtUp: 'सब पढ़ा हुआ', noNotifications: 'कोई नई सूचना नहीं।', unread: 'नई',
+  guestTitle: 'जारी रखने के लिए लॉग इन करें', guestSub: 'टिकट बुक करने, अपनी बुकिंग देखने और सहायता पाने के लिए लॉग इन करें या खाता बनाएं।',
+  loading: 'लोड हो रहा है…', retry: 'फिर कोशिश करें', error: 'कुछ गलत हो गया।',
+};
+
+export type TKey = Key;
+
+export function useT() {
+  const { user } = useAuth();
+  const dict = user?.language === 'HINDI' ? hi : en;
+  return (key: Key) => dict[key];
+}
+
+
+
+

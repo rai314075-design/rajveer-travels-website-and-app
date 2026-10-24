@@ -1,0 +1,8 @@
+node_modules/
+.pnpm-store/
+.turbo/
+apps/app/.expo/
+apps/app/dist/
+apps/website/.next/
+apps/website/next-env.d.ts
+apps/website/tsconfig.tsbuildinfo
